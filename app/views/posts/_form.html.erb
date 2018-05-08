@@ -1,0 +1,63 @@
+<%= form_with(model: post, local: true) do |form| %>
+  <% if post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul>
+      <% post.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, id: :post_title %>
+  </div>
+
+  <%= form.fields_for :post_images do |ff| %>
+    <%= ff.file_field :file, :multiple => true, name: "post_images[file][]", id: "image_multi" %>
+  <% end %>
+
+  <div class="gallery"></div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<script>
+  // function previewImage(files){
+  //   var files = document.getElementById("image_multi").files;
+  //   for (var i = 0; i < files.length; i++)
+  //   {
+  //    // readURL(files[i]);
+  //    console.log(files[i]);
+  //   }
+  // }
+  $(function() {
+    // Multiple images preview in browser
+    var imagesPreview = function(input, placeToInsertImagePreview) {
+
+        if (input.files) {
+            var filesAmount = input.files.length;
+
+            for (i = 0; i < filesAmount; i++) {
+                var reader = new FileReader();
+
+                reader.onload = function(event) {
+                    $($.parseHTML('<img>')).attr('src', event.target.result).height(200).appendTo(placeToInsertImagePreview);
+                }
+
+                reader.readAsDataURL(input.files[i]);
+            }
+        }
+
+    };
+
+    $('#image_multi').on('change', function() {
+        imagesPreview(this, 'div.gallery');
+    });
+  });
+</script>
